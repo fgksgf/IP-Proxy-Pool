@@ -1,3 +1,5 @@
+import logging
+
 from .database import RedisClient
 from .crawler import Crawler
 from .setting import *
@@ -12,6 +14,7 @@ class Getter:
     def __init__(self):
         self.redis = RedisClient()
         self.crawler = Crawler()
+        self.logger = logging.getLogger('main.getter')
 
     def is_over_threshold(self):
         """
@@ -25,7 +28,7 @@ class Getter:
         调用爬虫中的一系列函数，爬取代理，并将代理保存到数据库
         :return: 返回爬取的所有代理数量
         """
-        print('-' * 10, '获取器开始执行', '-' * 10)
+        self.logger.info('获取器开始运行')
         count = 0
         if not self.is_over_threshold():
             for callback_label in range(self.crawler.__CrawlFuncCount__):
@@ -34,4 +37,4 @@ class Getter:
                 proxies = self.crawler.get_proxies(callback)
                 count += len(proxies)
                 self.redis.add_proxies(proxies)
-            print('获取器共爬取：' + str(count) + '条代理')
+            self.logger.info('获取器共爬取：' + str(count) + '条代理')
