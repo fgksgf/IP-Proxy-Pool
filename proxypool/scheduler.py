@@ -1,3 +1,4 @@
+import logging
 import time
 from multiprocessing import Process
 
@@ -8,6 +9,9 @@ from .setting import *
 
 
 class Scheduler:
+    def __init__(self):
+        self.logger = logging.getLogger('main.scheduler')
+
     @staticmethod
     def schedule_tester(cycle=TESTER_CYCLE):
         """
@@ -36,7 +40,7 @@ class Scheduler:
         app.run(API_HOST, API_PORT)
 
     def run(self):
-        print('-' * 10, '代理池开始运行', '-' * 10)
+        self.logger.info('代理池开始运行')
 
         if TESTER_ENABLED:
             tester_process = Process(target=self.schedule_tester)
