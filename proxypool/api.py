@@ -1,3 +1,5 @@
+import json
+
 from flask import Flask, g
 
 from .database import RedisClient
@@ -19,19 +21,29 @@ def index():
 
 
 @app.route('/random')
-def get_proxy():
+def get_single_proxy():
     """
-    Get a proxy
+    随机获取一个可用代理
     :return: 随机代理
     """
     conn = get_conn()
-    return conn.random_get_proxy()
+    return str(conn.random_get_proxy())
+
+
+@app.route('/batch')
+def get_batch_proxy():
+    """
+    获取当前所有可用代理
+    :return: 可用代理列表
+    """
+    conn = get_conn()
+    return json.dumps(conn.get_all_available())
 
 
 @app.route('/count')
 def get_counts():
     """
-    Get the count of proxies
+    返回当前代理池中代理数量
     :return: 代理池总量
     """
     conn = get_conn()

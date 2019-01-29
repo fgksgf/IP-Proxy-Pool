@@ -98,3 +98,10 @@ class RedisClient:
         :return: 代理列表
         """
         return self.db.zrevrange(REDIS_KEY, start, stop - 1)
+
+    def get_all_available(self):
+        """
+        从数据库中获取所有可用代理
+        :return: 代理列表
+        """
+        return self.db.zrangebyscore(REDIS_KEY, MAX_SCORE, '+inf')
