@@ -29,9 +29,8 @@ class Tester:
                         self.redis.set_max_score(proxy)
                     else:
                         self.redis.degrade_proxy(proxy)
-            except Exception as e:
+            except Exception:
                 self.redis.degrade_proxy(proxy)
-                self.logger.error('测试单个代理异常: ', e.args)
 
     def run(self, sleep_time=5):
         """
@@ -41,7 +40,7 @@ class Tester:
         self.logger.info('测试器开始运行')
         try:
             count = self.redis.get_proxy_count()
-            self.logger.info('当前剩余: ', count, '个代理')
+            self.logger.info('当前剩余: ' + str(count) + '个代理')
             for i in range(0, count, BATCH_TEST_SIZE):
                 start = i
                 stop = min(i + BATCH_TEST_SIZE, count)
@@ -52,4 +51,4 @@ class Tester:
                 loop.run_until_complete(asyncio.wait(tasks))
                 time.sleep(sleep_time)
         except Exception as e:
-            self.logger.error('测试器异常: ', e.args)
+            self.logger.error('测试器异常: ' + str(e.args))
