@@ -1,4 +1,6 @@
 import logging
+import sys
+
 from proxypool.database import RedisClient
 from proxypool.getter import Getter
 from proxypool.scheduler import Scheduler
@@ -43,14 +45,20 @@ def init_logger():
     初始化日志器
     """
     logger = logging.getLogger('main')
-    logger.setLevel(level=logging.DEBUG)
+    # logger.setLevel(level=logging.INFO)
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 
-    # Handler
-    handler = logging.FileHandler('result.log')
-    handler.setLevel(logging.INFO)
-    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(filename)s - %(message)s')
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
+    # 将日志输出到文件
+    file_handler = logging.FileHandler('result.log')
+    file_handler.setLevel(level=logging.DEBUG)
+    file_handler.setFormatter(formatter)
+    logger.addHandler(file_handler)
+
+    # 将日志输出到控制台
+    stream_handler = logging.StreamHandler(sys.stdout)
+    stream_handler.setLevel(level=logging.INFO)
+    stream_handler.setFormatter(formatter)
+    logger.addHandler(stream_handler)
 
 
 if __name__ == '__main__':
