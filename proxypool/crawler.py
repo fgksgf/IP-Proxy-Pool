@@ -1,3 +1,4 @@
+import logging
 import random
 import time
 
@@ -17,19 +18,6 @@ base_headers = {
 }
 
 
-def get_page(url, options={}):
-    random_user_agent = r_agent.random_agent('desktop', random.choice(platform))
-    base_headers['User-Agent'] = random_user_agent
-    headers = dict(base_headers, **options)
-    try:
-        response = requests.get(url, headers=headers)
-        if response.status_code == 200:
-            return response.text
-    except ConnectionError:
-        print('抓取失败: ', url, response.status_code)
-        return None
-
-
 class ProxyMetaclass(type):
     def __new__(mcs, name, bases, attrs):
         count = 0
@@ -43,11 +31,26 @@ class ProxyMetaclass(type):
 
 
 class Crawler(object, metaclass=ProxyMetaclass):
+    def __init__(self):
+        self.logger = logging.getLogger('main.crawler')
+
     def get_proxies(self, callback):
         proxies = []
         for proxy in eval("self.{}()".format(callback)):
             proxies.append(proxy)
         return proxies
+
+    def get_page(self, url, options={}):
+        random_user_agent = r_agent.random_agent('desktop', random.choice(platform))
+        base_headers['User-Agent'] = random_user_agent
+        headers = dict(base_headers, **options)
+        try:
+            response = requests.get(url, headers=headers)
+            if response.status_code == 200:
+                return response.text
+        except ConnectionError:
+            self.logger.error('抓取失败: %s %s', url, response.status_code)
+            return None
 
     def crawl_xicidaili(self, max_page=10):
         """
@@ -55,12 +58,11 @@ class Crawler(object, metaclass=ProxyMetaclass):
         :param max_page: 每页100条数据，要抓取的最大页数，默认为10
         :return: 返回代理字符串，格式为'ip地址:端口'
         """
-        print('正在爬取西刺代理...')
         count = 0
         base_url = 'https://www.xicidaili.com/nn/{page}'
         for i in range(1, max_page + 1):
             url = base_url.format(page=i)
-            html = get_page(url)
+            html = self.get_page(url)
             if html:
                 doc = pq(html)
                 trs = doc('#ip_list tr')
@@ -74,19 +76,18 @@ class Crawler(object, metaclass=ProxyMetaclass):
                         # 端口
                         port = trs.eq(j).children('td').eq(2).text().strip()
                         yield ip_address + ':' + port
-        print('共爬取', count, '条代理\n\n')
+        self.logger.debug('西刺代理: 共爬取 %d 条代理', count)
 
     def crawl_ip3366(self):
         """
         抓取IP3366网站国内高匿代理
         :return: 返回代理字符串，格式为'ip地址:端口'
         """
-        print('正在爬取IP3366代理...')
         count = 0
         base_url = 'http://www.ip3366.net/free/?stype=1&page={page}'
         for page in range(1, 7):
             url = base_url.format(page=page)
-            html = get_page(url)
+            html = self.get_page(url)
             if html:
                 doc = pq(html)
                 trs = doc('.table tr')
@@ -97,17 +98,16 @@ class Crawler(object, metaclass=ProxyMetaclass):
                     # 端口
                     port = trs.eq(i).children('td').eq(1).text().strip()
                     yield ip_address + ':' + port
-        print('共爬取', count, '条代理\n\n')
+        self.logger.debug('IP3366: 共爬取 %d 条代理', count)
 
     def crawl_iphai(self):
         """
         抓取IP海网站国内高匿代理
         :return: 返回代理字符串，格式为'ip地址:端口'
         """
-        print('正在爬取IP海代理...')
         count = 0
         url = 'http://www.iphai.com/free/ng'
-        html = get_page(url)
+        html = self.get_page(url)
         if html:
             doc = pq(html)
             trs = doc('.table tr')
@@ -118,17 +118,16 @@ class Crawler(object, metaclass=ProxyMetaclass):
                 # 端口
                 port = trs.eq(i).children('td').eq(1).text().strip()
                 yield ip_address + ':' + port
-        print('共爬取', count, '条代理\n\n')
+        self.logger.debug('IP海: 共爬取 %d 条代理', count)
 
     def crawl_data5u(self):
         """
         抓取DATA5U网站国内高匿代理
         :return: 返回代理字符串，格式为'ip地址:端口'
         """
-        print('正在爬取无忧代理...')
         count = 0
         url = 'http://www.data5u.com/free/gngn/index.shtml'
-        html = get_page(url)
+        html = self.get_page(url)
         if html:
             doc = pq(html)
             uls = doc('.wlist .l2')
@@ -139,7 +138,7 @@ class Crawler(object, metaclass=ProxyMetaclass):
                 # 端口
                 port = uls.eq(i).children('span').eq(1).text().strip()
                 yield ip_address + ':' + port
-        print('共爬取', count, '条代理\n\n')
+        self.logger.debug('无忧代理: 共爬取 %d 条代理', count)
 
     def crawl_qiyun(self, max_page=10):
         """
@@ -147,12 +146,11 @@ class Crawler(object, metaclass=ProxyMetaclass):
         :param max_page: 每页10条数据，要抓取的最大页数，默认为10
         :return: 返回代理字符串，格式为'ip地址:端口'
         """
-        print('正在爬取旗云代理...')
         count = 0
         base_url = 'http://www.qydaili.com/free/?page={page}'
         for page in range(1, max_page + 1):
             url = base_url.format(page=page)
-            html = get_page(url)
+            html = self.get_page(url)
             if html:
                 doc = pq(html)
                 trs = doc('.table tbody tr')
@@ -163,15 +161,14 @@ class Crawler(object, metaclass=ProxyMetaclass):
                     # 端口
                     port = trs.eq(i).children('td').eq(1).text().strip()
                     yield ip_address + ':' + port
-        print('共爬取', count, '条代理\n\n')
+        self.logger.debug('旗云代理: 共爬取 %d 条代理', count)
 
     def crawl_xiaohuan(self):
-        print('正在爬取小幻代理...')
         base_url = 'https://ip.ihuan.me/today/{date}.html'
         date_str = time.strftime("%Y/%m/%d/%H", time.localtime())
         count = 0
         url = base_url.format(date=date_str)
-        html = get_page(url)
+        html = self.get_page(url)
         if html:
             doc = pq(html)
             items = doc('.text-left').text().strip().split('\n')
@@ -181,7 +178,7 @@ class Crawler(object, metaclass=ProxyMetaclass):
                     p = item.find('@')
                     proxy = item[:p]
                     yield proxy
-        print('共爬取', count, '条代理\n\n')
+        self.logger.debug('小幻代理: 共爬取 %d 条代理', count)
 
 
 if __name__ == '__main__':
