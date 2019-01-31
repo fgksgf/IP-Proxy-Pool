@@ -14,7 +14,6 @@ def test_database():
     """
     redis = RedisClient()
     print(redis.get_proxy_count())
-    print(redis.random_get_proxy())
 
 
 def test_getter():
@@ -45,7 +44,7 @@ def init_logger():
     初始化日志器
     """
     logger = logging.getLogger('main')
-    # logger.setLevel(level=logging.INFO)
+    logger.setLevel(level=logging.INFO)
     formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 
     # 将日志输出到文件
