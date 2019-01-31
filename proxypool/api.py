@@ -1,12 +1,12 @@
 import json
-
+import logging
 from flask import Flask, g
-
 from .database import RedisClient
 
 __all__ = ['app']
-
 app = Flask(__name__)
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
 
 
 def get_conn():
