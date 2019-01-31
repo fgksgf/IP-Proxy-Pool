@@ -29,7 +29,7 @@ GETTER_CYCLE = 60 * 60 * 3
 TEST_URL = 'https://www.jd.com/'
 
 # API配置
-API_HOST = '127.0.0.1'
+API_HOST = '0.0.0.0'
 API_PORT = 5000
 
 # 开关
