@@ -40,11 +40,11 @@ class Tester:
         self.logger.info('测试器开始运行')
         try:
             count = self.redis.get_proxy_count()
-            self.logger.info('当前剩余: ' + str(count) + '个代理')
+            self.logger.info('测试器当前剩余: ' + str(count) + '个代理')
             for i in range(0, count, BATCH_TEST_SIZE):
                 start = i
                 stop = min(i + BATCH_TEST_SIZE, count)
-                self.logger.info('正在测试第', start + 1, '-', stop, '个代理...')
+                self.logger.info('测试器正在测试第', start + 1, '-', stop, '个代理...')
                 test_proxies = self.redis.get_batch(start, stop)
                 loop = asyncio.get_event_loop()
                 tasks = [self.test_single_proxy(proxy) for proxy in test_proxies]
