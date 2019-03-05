@@ -1,5 +1,5 @@
 # Redis数据库地址
-REDIS_HOST = '119.29.135.136'
+REDIS_HOST = '39.96.94.81'
 
 # Redis端口
 REDIS_PORT = 6379
