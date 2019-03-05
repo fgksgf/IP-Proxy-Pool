@@ -48,14 +48,14 @@ def init_logger():
     formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 
     # 将日志输出到文件
-    file_handler = logging.FileHandler('result.log')
-    file_handler.setLevel(level=logging.DEBUG)
-    file_handler.setFormatter(formatter)
-    logger.addHandler(file_handler)
+    # file_handler = logging.FileHandler('result.log')
+    # file_handler.setLevel(level=logging.DEBUG)
+    # file_handler.setFormatter(formatter)
+    # logger.addHandler(file_handler)
 
     # 将日志输出到控制台
     stream_handler = logging.StreamHandler(sys.stdout)
-    stream_handler.setLevel(level=logging.INFO)
+    stream_handler.setLevel(level=logging.DEBUG)
     stream_handler.setFormatter(formatter)
     logger.addHandler(stream_handler)
 
