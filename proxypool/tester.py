@@ -16,6 +16,7 @@ class Tester:
     async def test_single_proxy(self, proxy, timeout=5.0):
         """
         测试单个代理
+
         :param timeout: 测试代理的最大等待时长，默认为5秒
         :param proxy: 需要测试的代理
         """
@@ -26,10 +27,19 @@ class Tester:
             try:
                 async with session.get(TEST_URL, proxy=real_proxy, timeout=timeout) as response:
                     if response.status == 200:
-                        self.redis.set_max_score(proxy)
+                        js = await response.json()
+                        origin = js.get('origin').split(', ')
+                        # 判断该代理是否为高匿代理
+                        # 若为高匿代理会返回两个相同的代理ip
+                        if len(origin) == 2 and proxy in origin:
+                            self.redis.set_max_score(proxy)
+                        else:
+                            # 若不是，代理扣除最大分值
+                            self.redis.degrade_proxy(proxy, MAX_SCORE)
                     else:
                         self.redis.degrade_proxy(proxy)
             except Exception:
+                # self.logger.error('测试单个代理时异常: ' + str(e.args))
                 self.redis.degrade_proxy(proxy)
 
     def run(self, sleep_time=5):
@@ -37,6 +47,10 @@ class Tester:
         测试主函数
         :param sleep_time: 批测试间隔时间，默认为5秒
         """
+        # 检查获取器运行状态，若在运行中，则测试器不运行
+        getter_flag = self.redis.db.get('getter:status')
+        if getter_flag == 'work':
+            return
         self.logger.info('测试器开始运行')
         try:
             count = self.redis.get_proxy_count()
