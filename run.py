@@ -13,7 +13,10 @@ def test_database():
     测试数据库IO模块
     """
     redis = RedisClient()
-    print(redis.get_proxy_count())
+    redis.db.set('test', 1)
+    print(redis.db.get('test'))
+    redis.db.set('test', 2)
+    print(type(redis.db.get('test')))
 
 
 def test_getter():
@@ -47,12 +50,6 @@ def init_logger():
     logger.setLevel(level=logging.INFO)
     formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 
-    # 将日志输出到文件
-    # file_handler = logging.FileHandler('result.log')
-    # file_handler.setLevel(level=logging.DEBUG)
-    # file_handler.setFormatter(formatter)
-    # logger.addHandler(file_handler)
-
     # 将日志输出到控制台
     stream_handler = logging.StreamHandler(sys.stdout)
     stream_handler.setLevel(level=logging.DEBUG)
@@ -62,7 +59,7 @@ def init_logger():
 
 if __name__ == '__main__':
     init_logger()
-    schedule = Scheduler()
-    schedule.run()
+    # schedule = Scheduler()
+    # schedule.run()
     # test_database()
-    # test_tester()
+    test_tester()
