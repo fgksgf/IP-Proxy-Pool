@@ -26,7 +26,8 @@ TESTER_CYCLE = 60 * 60
 GETTER_CYCLE = 60 * 60 * 3
 
 # 测试API，建议抓哪个网站测哪个
-TEST_URL = 'https://www.jd.com/'
+# 使用httpbin来判断代理是否为高匿代理
+TEST_URL = 'http://httpbin.org/ip'
 
 # API配置
 API_HOST = '0.0.0.0'
