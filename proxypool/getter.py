@@ -29,6 +29,8 @@ class Getter:
         :return: 返回爬取的所有代理数量
         """
         self.logger.info('获取器开始运行')
+        # 在redis中设置获取器运行状态标志
+        self.redis.db.set('getter:status', 'work')
         count = 0
         if not self.is_over_threshold():
             for callback_label in range(self.crawler.__CrawlFuncCount__):
@@ -38,3 +40,5 @@ class Getter:
                 count += len(proxies)
                 self.redis.add_proxies(proxies)
             self.logger.info('获取器共爬取：' + str(count) + '条代理')
+        # 在redis中更改获取器运行状态标志，0表示空闲中
+        self.redis.db.set('getter:status', 'idle')
