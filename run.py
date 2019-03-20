@@ -59,7 +59,7 @@ def init_logger():
 
 if __name__ == '__main__':
     init_logger()
-    # schedule = Scheduler()
-    # schedule.run()
+    schedule = Scheduler()
+    schedule.run()
     # test_database()
-    test_tester()
+    # test_tester()
