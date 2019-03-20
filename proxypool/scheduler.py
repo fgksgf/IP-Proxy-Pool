@@ -41,9 +41,6 @@ class Scheduler:
 
     def run(self):
         self.logger.info('代理池开始运行')
-        if TESTER_ENABLED:
-            tester_process = Process(target=self.schedule_tester)
-            tester_process.start()
 
         if GETTER_ENABLED:
             getter_process = Process(target=self.schedule_getter)
@@ -52,3 +49,9 @@ class Scheduler:
         if API_ENABLED:
             api_process = Process(target=self.schedule_api)
             api_process.start()
+
+        # 延迟测试模块启动
+        if TESTER_ENABLED:
+            time.sleep(1)
+            tester_process = Process(target=self.schedule_tester)
+            tester_process.start()
