@@ -39,7 +39,6 @@ class Tester:
                     else:
                         self.redis.degrade_proxy(proxy)
             except Exception:
-                # self.logger.error('测试单个代理时异常: ' + str(e.args))
                 self.redis.degrade_proxy(proxy)
 
     def run(self, sleep_time=5):
