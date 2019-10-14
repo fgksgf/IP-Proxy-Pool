@@ -1,11 +1,11 @@
 # Redis数据库地址
-REDIS_HOST = '39.96.94.81'
+REDIS_HOST = '127.0.0.1'
 
 # Redis端口
 REDIS_PORT = 6379
 
 # Redis密码，如无填None
-REDIS_PASSWORD = 'iE23fP$d9yTQCgmc'
+REDIS_PASSWORD = 'password'
 
 REDIS_KEY = 'proxies'
 
