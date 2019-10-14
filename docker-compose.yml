@@ -1,0 +1,22 @@
+version: "1.0"
+services:
+
+  redis:
+    image: redis
+    container_name: my_redis
+      command: redis-server /redis.conf
+      ports:
+        - "6379:6379"
+      volumes:
+        - ./data:/data
+        - ./redis.conf:/redis.conf
+
+  pool:
+    build: .
+    command: python run.py
+    volumes:
+      - .:/code
+    ports:
+      - "5000:5000"
+    links:
+      - redis
