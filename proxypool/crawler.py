@@ -138,7 +138,6 @@ class Crawler(object, metaclass=ProxyMetaclass):
         date_str = time.strftime("%Y/%m/%d/%H", time.localtime())
         count = 0
         url = base_url.format(date=date_str)
-        print(url)
         html = self.get_page(url)
         if html:
             doc = pq(html)
@@ -151,34 +150,8 @@ class Crawler(object, metaclass=ProxyMetaclass):
                     yield proxy
         self.logger.debug('小幻代理: 共爬取 %d 条代理', count)
 
-    def crawl_proxylist(self, max_page=10):
-        """
-        抓取proxylist网站的国内高匿代理
-
-        :return: 返回代理字符串，格式为'ip地址:端口'
-        """
-        base_url = 'http://www.proxylists.net/cn_{page}.html'
-        count = 0
-        for i in range(max_page):
-            url = base_url.format(page=i)
-            html = self.get_page(url)
-            if html:
-                doc = pq(html)
-                trs = doc('body > b > table > tbody > tr:nth-child(1) > td:nth-child(2) > table > tbody tr')
-
-                # 因为第一行表头也是tr，所以采用这种方式，而不是遍历trs
-                for j in range(2, 12):
-                    # ip地址
-                    ip_address = trs.eq(j).children('td').eq(0).text().strip()
-                    # 端口
-                    port = trs.eq(j).children('td').eq(1).text().strip()
-                    if ip_address and port:
-                        count += 1
-                        yield ip_address + ':' + port
-        self.logger.debug('Proxy List: 共爬取 %d 条代理', count)
-
 
 if __name__ == '__main__':
     crawler = Crawler()
-    crawler.crawl_proxylist()
-    # crawler.crawl_xiaohuan()
+    # print(next(crawler.crawl_xicidaili(max_page=1)))
+    # print(next(crawler.crawl_xiaohuan()))
