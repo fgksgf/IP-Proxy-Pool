@@ -13,10 +13,10 @@ def test_database():
     测试数据库IO模块
     """
     redis = RedisClient()
-    redis.db.set('test', 1)
-    print(redis.db.get('test'))
-    redis.db.set('test', 2)
-    print(type(redis.db.get('test')))
+    redis.db.set('tests', 1)
+    print(redis.db.get('tests'))
+    redis.db.set('tests', 2)
+    print(type(redis.db.get('tests')))
 
 
 def test_getter():

@@ -11,7 +11,7 @@ services:
         - ./data:/data
         - ./redis.conf:/redis.conf
 
-  pool:
+  proxypool:
     build: .
     command: python run.py
     volumes:
