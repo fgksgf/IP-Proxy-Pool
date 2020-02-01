@@ -78,7 +78,7 @@ class Crawler(object, metaclass=ProxyMetaclass):
                         count += 1
                         yield ip_address + ':' + port
 
-        self.logger.debug('西刺代理: 共爬取 %d 条代理', count)
+        self.logger.info('西刺代理: 共爬取 %d 条代理', count)
 
     def crawl_ip3366(self):
         """
@@ -102,7 +102,7 @@ class Crawler(object, metaclass=ProxyMetaclass):
                     if ip_address and port:
                         count += 1
                     yield ip_address + ':' + port
-        self.logger.debug('IP3366: 共爬取 %d 条代理', count)
+        self.logger.info('IP3366: 共爬取 %d 条代理', count)
 
     def crawl_qiyun(self, max_page=10):
         """
@@ -126,7 +126,7 @@ class Crawler(object, metaclass=ProxyMetaclass):
                     # 端口
                     port = trs.eq(i).children('td').eq(1).text().strip()
                     yield ip_address + ':' + port
-        self.logger.debug('齐云代理: 共爬取 %d 条代理', count)
+        self.logger.info('齐云代理: 共爬取 %d 条代理', count)
 
     def crawl_xiaohuan(self):
         """
@@ -148,7 +148,7 @@ class Crawler(object, metaclass=ProxyMetaclass):
                     p = item.find('@')
                     proxy = item[:p]
                     yield proxy
-        self.logger.debug('小幻代理: 共爬取 %d 条代理', count)
+        self.logger.info('小幻代理: 共爬取 %d 条代理', count)
 
 
 if __name__ == '__main__':
