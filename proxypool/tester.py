@@ -5,7 +5,7 @@ import aiohttp
 import time
 
 from .database import RedisClient
-from .setting import *
+from .settings import *
 
 
 class Tester:

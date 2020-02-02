@@ -5,7 +5,7 @@ from multiprocessing import Process
 from .api import app
 from .getter import Getter
 from .tester import Tester
-from .setting import *
+from .settings import *
 
 
 class Scheduler:

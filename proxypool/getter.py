@@ -2,7 +2,7 @@ import logging
 
 from .database import RedisClient
 from .crawler import Crawler
-from .setting import *
+from .settings import *
 
 
 class Getter:

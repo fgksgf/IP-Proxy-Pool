@@ -1,8 +1,8 @@
 import redis
 
 from .error import PoolEmptyError
-from .setting import REDIS_HOST, REDIS_PORT, REDIS_PASSWORD, REDIS_KEY
-from .setting import MAX_SCORE, MIN_SCORE, INITIAL_SCORE, DECREASE_SCORE
+from .settings import REDIS_HOST, REDIS_PORT, REDIS_PASSWORD, REDIS_KEY
+from .settings import MAX_SCORE, MIN_SCORE, INITIAL_SCORE, DECREASE_SCORE
 from random import choice
 
 import re
