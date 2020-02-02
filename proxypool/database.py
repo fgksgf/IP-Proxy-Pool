@@ -1,14 +1,18 @@
 import redis
 
 from .error import PoolEmptyError
-from .setting import REDIS_HOST, REDIS_PORT, REDIS_PASSWORD, REDIS_KEY
-from .setting import MAX_SCORE, MIN_SCORE, INITIAL_SCORE, DECREASE_SCORE
+from .settings import REDIS_HOST, REDIS_PORT, REDIS_PASSWORD, REDIS_KEY
+from .settings import MAX_SCORE, MIN_SCORE, INITIAL_SCORE, DECREASE_SCORE
 from random import choice
 
 import re
 
 
 class RedisClient:
+    """
+    Redis客户端类，用于连接数据库对数据进行增删查改等操作
+    """
+
     def __init__(self, host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PASSWORD):
         """
         初始化
@@ -28,7 +32,7 @@ class RedisClient:
         """
         with self.db.pipeline(transaction=False) as pipe:
             for proxy in proxies:
-                if re.match('\d+\.\d+\.\d+\.\d+\:\d+', proxy):
+                if re.match(r'\d+\.\d+\.\d+\.\d+:\d+', proxy):
                     pipe.zadd(REDIS_KEY, {proxy: score})
             pipe.execute()
 
