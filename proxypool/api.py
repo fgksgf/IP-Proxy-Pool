@@ -17,7 +17,7 @@ def get_conn():
 
 @app.route('/')
 def index():
-    return '<h1>Welcome to IP Proxy Pool System</h1>'
+    return '<h1>Welcome to IP Proxy Pool.</h1>'
 
 
 @app.route('/random')
