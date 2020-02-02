@@ -152,6 +152,7 @@ class Crawler(object, metaclass=ProxyMetaclass):
 
 
 if __name__ == '__main__':
+    # Debug code
     crawler = Crawler()
-    # print(next(crawler.crawl_xicidaili(max_page=1)))
-    # print(next(crawler.crawl_xiaohuan()))
+    print(next(crawler.crawl_xicidaili(max_page=1)))
+    print(next(crawler.crawl_xiaohuan()))
