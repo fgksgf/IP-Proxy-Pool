@@ -1,4 +1,4 @@
-FROM python:3.6-slim
+FROM python:3.6-alpine
 COPY . /code
 WORKDIR /code
 EXPOSE 5000
