@@ -20,7 +20,7 @@ Set your own password in redis.conf after 'requirepass', and in settings.py.
 
 ```bash
 $ git clone git@github.com:fgksgf/IP-Proxy-Pool.git
-$ cd IP-Proxy-Pool-master/
+$ cd IP-Proxy-Pool/
 $ docker-compose up -d
 ```
 

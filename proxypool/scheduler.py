@@ -52,6 +52,6 @@ class Scheduler:
 
         # 延迟测试模块启动
         if TESTER_ENABLED:
-            time.sleep(1)
+            time.sleep(10)
             tester_process = Process(target=self.schedule_tester)
             tester_process.start()
