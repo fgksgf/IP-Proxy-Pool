@@ -1,8 +1,8 @@
 import logging
 
-from .database import RedisClient
-from .crawler import Crawler
-from .settings import *
+from proxypool.database import RedisClient
+from proxypool.crawler import Crawler
+from proxypool.settings import *
 
 
 class Getter:
@@ -14,7 +14,7 @@ class Getter:
     def __init__(self):
         self.redis = RedisClient()
         self.crawler = Crawler()
-        self.logger = logging.getLogger('main.getter')
+        self.logger = logging.getLogger('getter')
 
     def is_over_threshold(self):
         """
@@ -28,17 +28,19 @@ class Getter:
         调用爬虫中的一系列函数，爬取代理，并将代理保存到数据库
         :return: 返回爬取的所有代理数量
         """
-        self.logger.info('获取器开始运行')
+        self.logger.info('start running')
         # 在redis中设置获取器运行状态标志
-        self.redis.db.set('getter:status', 'work')
-        count = 0
+        self.redis.redis.set('getter:status', 'work')
+
         if not self.is_over_threshold():
+            count = 0
             for callback_label in range(self.crawler.__CrawlFuncCount__):
                 callback = self.crawler.__CrawlFunc__[callback_label]
-                # 获取代理
                 proxies = self.crawler.get_proxies(callback)
                 count += len(proxies)
                 self.redis.add_proxies(proxies)
-            self.logger.info('获取器共爬取：' + str(count) + '条代理')
-        # 在redis中更改获取器运行状态标志，0表示空闲中
-        self.redis.db.set('getter:status', 'idle')
+            self.logger.info('共爬取：%d条代理', count)
+
+        # 在redis中更改获取器运行状态标志
+        self.redis.redis.set('getter:status', 'idle')
+        self.logger.info('运行结束，进入等待状态')

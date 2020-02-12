@@ -33,7 +33,7 @@ class ProxyMetaclass(type):
 # TODO: Refactor code to reduce duplicated code.
 class Crawler(object, metaclass=ProxyMetaclass):
     def __init__(self):
-        self.logger = logging.getLogger('main.crawler')
+        self.logger = logging.getLogger('crawler')
 
     def get_proxies(self, callback):
         proxies = []
@@ -149,10 +149,3 @@ class Crawler(object, metaclass=ProxyMetaclass):
                     proxy = item[:p]
                     yield proxy
         self.logger.info('小幻代理: 共爬取 %d 条代理', count)
-
-
-if __name__ == '__main__':
-    # Debug code
-    crawler = Crawler()
-    print(next(crawler.crawl_xicidaili(max_page=1)))
-    print(next(crawler.crawl_xiaohuan()))
