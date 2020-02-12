@@ -12,19 +12,20 @@ The pool contains three sub-modules: the proxy getter, the proxy tester, and the
 
 **It is highly recommended that deploying this pool on a server as a independent node.** _Notably, this proxy pool only crawls China proxies._
 
-## Config
-
-Set your own password in redis.conf after 'requirepass', and in settings.py.
-
 ## Usage
 
 ```bash
-$ git clone git@github.com:fgksgf/IP-Proxy-Pool.git
+$ git clone https://github.com/fgksgf/IP-Proxy-Pool.git
 $ cd IP-Proxy-Pool/
+
+# set your own password of redis
+$ vim redis.conf
+$ vim proxypool/settings.py
+
 $ docker-compose up -d
 ```
 
-Then you can use `docker logs` to check logs. For checking proxies, you can connect redis at 127.0.0.1:6379 via redis GUI tools.
+Then you can use `docker logs <container id>` to check logs. For checking proxies, you can connect redis at 127.0.0.1:6379 via redis GUI tools.
 
 ### API
 
@@ -34,12 +35,18 @@ You can access `127.0.0.1:5000` to get these services:
 +   `/batch`: get all currently available proxies.
 +   `/count`: get the number of proxies.
 
-## Change Log
+## Change Logs
+
+### 1.1 (2020-02-12)
+
++ Modify logger format
++ Change logger name
++ Add test methods for database
 
 ### 1.0 (2020-02-01)
 
 +   Use docker compose
 +   Add more detailed comments
 +   Update proxy crawlers
-+   Add test methods
++   Add test methods for crawlers
 +   Update python packages
