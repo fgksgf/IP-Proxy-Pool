@@ -22,6 +22,9 @@ $ cd IP-Proxy-Pool/
 $ vim redis.conf
 $ vim proxypool/settings.py
 
+# set your absolute path of IP-Proxy-Pool/ on line 17
+$ vim docker-compose.yml
+
 $ docker-compose up -d
 ```
 
@@ -39,6 +42,7 @@ You can access `127.0.0.1:5000` to get these services:
 
 ### 1.1 (2020-02-12)
 
++ Mount code directory rather than copy code into docker image
 + Modify logger format
 + Change logger name
 + Add test methods for database
