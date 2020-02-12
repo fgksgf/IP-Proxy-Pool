@@ -1,11 +1,11 @@
+import logging
+
 import redis
 
-from .error import PoolEmptyError
-from .settings import REDIS_HOST, REDIS_PORT, REDIS_PASSWORD, REDIS_KEY
-from .settings import MAX_SCORE, MIN_SCORE, INITIAL_SCORE, DECREASE_SCORE
+from proxypool.error import PoolEmptyError
+from proxypool.settings import REDIS_HOST, REDIS_PORT, REDIS_PASSWORD, REDIS_KEY
+from proxypool.settings import MAX_SCORE, MIN_SCORE, INITIAL_SCORE, DECREASE_SCORE
 from random import choice
-
-import re
 
 
 class RedisClient:
@@ -16,25 +16,29 @@ class RedisClient:
     def __init__(self, host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PASSWORD):
         """
         初始化
+
         :param host: Redis 地址
         :param port: Redis 端口
         :param password: Redis密码
         """
-        self.db = redis.StrictRedis(host=host, port=port, password=password, decode_responses=True)
+        self.redis = redis.StrictRedis(host=host, port=port, password=password, decode_responses=True)
+        self.logger = logging.getLogger('redis')
 
-    def add_proxies(self, proxies, score=INITIAL_SCORE):
+    def add_proxies(self, proxies, score=INITIAL_SCORE, key=REDIS_KEY):
         """
         使用管道，批量向数据库中添加代理数据，将其分数设置为最高
 
         :param proxies: 代理
         :param score: 分数
-        :return: 添加结果
+        :param key: 键名
+        :return: 存储代理数量
         """
-        with self.db.pipeline(transaction=False) as pipe:
-            for proxy in proxies:
-                if re.match(r'\d+\.\d+\.\d+\.\d+:\d+', proxy):
-                    pipe.zadd(REDIS_KEY, {proxy: score})
-            pipe.execute()
+        pipe = self.redis.pipeline(transaction=True)
+        for proxy in proxies:
+            pipe.zadd(key, {proxy: score})
+        saved = sum(pipe.execute())
+        self.logger.info('Save %d proxies successfully.', saved)
+        return saved
 
     def random_get_proxy(self):
         """
@@ -43,12 +47,12 @@ class RedisClient:
         :return: 随机代理
         """
         # 获取分数大于等于100的代理
-        result = self.db.zrangebyscore(REDIS_KEY, MAX_SCORE, '+inf')
+        result = self.redis.zrangebyscore(REDIS_KEY, MAX_SCORE, '+inf')
         if len(result):
             return choice(result)
         else:
             # 获无符合条件的代理，则获取分数大于等于初始分数的代理
-            result = self.db.zrevrangebyscore(REDIS_KEY, '+inf', INITIAL_SCORE)
+            result = self.redis.zrevrangebyscore(REDIS_KEY, '+inf', INITIAL_SCORE)
             if len(result):
                 return choice(result)
             else:
@@ -62,11 +66,11 @@ class RedisClient:
         :param count: 要扣的分
         :return: 修改后的代理分数
         """
-        score = self.db.zscore(REDIS_KEY, proxy)
+        score = self.redis.zscore(REDIS_KEY, proxy)
         if score and score > MIN_SCORE:
-            return self.db.zincrby(REDIS_KEY, count, proxy)
+            return self.redis.zincrby(REDIS_KEY, count, proxy)
         else:
-            return self.db.zrem(REDIS_KEY, proxy)
+            return self.redis.zrem(REDIS_KEY, proxy)
 
     def exists(self, proxy):
         """
@@ -75,7 +79,7 @@ class RedisClient:
         :param proxy: 代理
         :return: 是否存在，
         """
-        return not (self.db.zscore(REDIS_KEY, proxy) is None)
+        return not (self.redis.zscore(REDIS_KEY, proxy) is None)
 
     def set_max_score(self, proxy):
         """
@@ -84,7 +88,7 @@ class RedisClient:
         :param proxy: 代理
         :return: 设置结果
         """
-        return self.db.zadd(REDIS_KEY, {proxy: MAX_SCORE})
+        return self.redis.zadd(REDIS_KEY, {proxy: MAX_SCORE})
 
     def get_proxy_count(self):
         """
@@ -92,7 +96,7 @@ class RedisClient:
 
         :return: 数量
         """
-        return self.db.zcard(REDIS_KEY)
+        return self.redis.zcard(REDIS_KEY)
 
     def get_all_ascending(self):
         """
@@ -100,7 +104,7 @@ class RedisClient:
 
         :return: 全部代理列表
         """
-        return self.db.zrangebyscore(REDIS_KEY, MIN_SCORE, MAX_SCORE)
+        return self.redis.zrangebyscore(REDIS_KEY, MIN_SCORE, MAX_SCORE)
 
     def get_batch(self, start, stop):
         """
@@ -110,7 +114,7 @@ class RedisClient:
         :param stop: 结束索引
         :return: 代理列表
         """
-        return self.db.zrevrange(REDIS_KEY, start, stop - 1)
+        return self.redis.zrevrange(REDIS_KEY, start, stop - 1)
 
     def get_all_available(self):
         """
@@ -118,4 +122,4 @@ class RedisClient:
 
         :return: 代理列表
         """
-        return self.db.zrangebyscore(REDIS_KEY, MAX_SCORE, '+inf')
+        return self.redis.zrangebyscore(REDIS_KEY, MAX_SCORE, '+inf')
