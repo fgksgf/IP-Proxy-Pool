@@ -10,7 +10,8 @@ def init_logger():
     """
     logger = logging.getLogger('main')
     logger.setLevel(level=logging.INFO)
-    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                                  datefmt='%Y/%m/%d %H:%M:%S')
 
     # 将日志输出到控制台
     stream_handler = logging.StreamHandler(sys.stdout)
