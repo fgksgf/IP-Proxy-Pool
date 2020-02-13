@@ -3,7 +3,7 @@ import logging
 import redis
 
 from proxypool.error import PoolEmptyError
-from proxypool.settings import REDIS_HOST, REDIS_PORT, REDIS_PASSWORD, REDIS_KEY
+from proxypool.settings import REDIS_HOST, REDIS_PORT, REDIS_PASSWORD, REDIS_KEY, LOCK_KEY
 from proxypool.settings import MAX_SCORE, MIN_SCORE, INITIAL_SCORE, DECREASE_SCORE
 from random import choice
 
@@ -37,7 +37,6 @@ class RedisClient:
         for proxy in proxies:
             pipe.zadd(key, {proxy: score})
         saved = sum(pipe.execute())
-        # self.logger.info('Save %d proxies successfully.', saved)
         return saved
 
     def random_get_proxy(self):
@@ -123,3 +122,21 @@ class RedisClient:
         :return: 代理列表
         """
         return self.redis.zrangebyscore(REDIS_KEY, MAX_SCORE, '+inf')
+
+    def acquire_lock(self, key=LOCK_KEY):
+        """
+        从redis获取锁
+
+        :param key: 锁的键名
+        :return: 成功获取返回True，否则返回False
+        """
+        return self.redis.get(key) == '1' and self.redis.decr(key) == 0
+
+    def release_lock(self, key=LOCK_KEY):
+        """
+        释放锁
+
+        :param key: 锁的键名
+        :return: 成功释放返回True，否则返回False
+        """
+        return self.redis.get(key) == '0' and self.redis.incr(key) == 1

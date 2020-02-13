@@ -46,6 +46,8 @@ You can access `127.0.0.1:5000` to get these services:
 + Modify logger format
 + Change logger name
 + Add test methods for database
++ Enhance exception handler
++ Use lock to prevent getter and tester working simultaneously
 
 ### 1.0 (2020-02-01)
 

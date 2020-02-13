@@ -48,8 +48,8 @@ class Crawler(object, metaclass=ProxyMetaclass):
             response = requests.get(url, headers=headers)
             if response.status_code == 200:
                 return response.text
-        except ConnectionError:
-            self.logger.error('抓取失败: %s %s', url, response.status_code)
+        except Exception as e:
+            self.logger.exception(str(e.args))
             return None
 
     def crawl_xicidaili(self, max_page=10):

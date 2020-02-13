@@ -2,6 +2,7 @@ import logging
 import time
 from multiprocessing import Process
 
+from proxypool.database import RedisClient
 from .api import app
 from .getter import Getter
 from .tester import Tester
@@ -11,6 +12,10 @@ from .settings import *
 class Scheduler:
     def __init__(self):
         self.logger = logging.getLogger('main.scheduler')
+
+        self.redis = RedisClient().redis
+        self.redis.set(LOCK_KEY, '1')
+        self.redis.delete(REDIS_KEY)
 
     @staticmethod
     def schedule_tester(cycle=TESTER_CYCLE):
@@ -50,7 +55,7 @@ class Scheduler:
             api_process = Process(target=self.schedule_api)
             api_process.start()
 
-        # 延迟测试模块启动
+        # 延迟启动测试模块
         if TESTER_ENABLED:
             time.sleep(10)
             tester_process = Process(target=self.schedule_tester)
