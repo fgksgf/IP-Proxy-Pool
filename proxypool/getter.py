@@ -28,19 +28,18 @@ class Getter:
         调用爬虫中的一系列函数，爬取代理，并将代理保存到数据库
         :return: 返回爬取的所有代理数量
         """
-        self.logger.info('开始爬取代理')
-        # 在redis中设置获取器运行状态标志
-        self.redis.redis.set('getter:status', 'work')
-
-        if not self.is_over_threshold():
+        if not self.is_over_threshold() and self.redis.acquire_lock():
+            self.logger.info('开始爬取代理')
             count = 0
             for callback_label in range(self.crawler.__CrawlFuncCount__):
-                callback = self.crawler.__CrawlFunc__[callback_label]
-                proxies = self.crawler.get_proxies(callback)
-                count += len(proxies)
-                self.redis.add_proxies(proxies)
-            self.logger.info('共爬取：%d条代理', count)
+                try:
+                    callback = self.crawler.__CrawlFunc__[callback_label]
+                    proxies = self.crawler.get_proxies(callback)
+                except Exception as e:
+                    self.logger.exception(str(e.args))
+                else:
+                    count += len(proxies)
+                    self.redis.add_proxies(proxies)
 
-        # 在redis中更改获取器运行状态标志
-        self.redis.redis.set('getter:status', 'idle')
-        self.logger.info('本次爬取完成，进入等待状态')
+            self.redis.release_lock()
+            self.logger.info('共爬取：%d条代理', count)
