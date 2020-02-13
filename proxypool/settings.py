@@ -10,11 +10,14 @@ REDIS_PASSWORD = 'password'
 # redis中存储代理的键名
 REDIS_KEY = 'proxies'
 
+# redis中存储锁的键名
+LOCK_KEY = 'mutex_lock'
+
 # 代理分数
 MAX_SCORE = 100
 MIN_SCORE = 0
 INITIAL_SCORE = 10
-DECREASE_SCORE = -1
+DECREASE_SCORE = -10
 
 # 代理池数量界限
 POOL_UPPER_THRESHOLD = 10000
