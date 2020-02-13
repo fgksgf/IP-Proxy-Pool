@@ -11,7 +11,7 @@ from proxypool.settings import *
 class Tester:
     def __init__(self):
         self.redis = RedisClient()
-        self.logger = logging.getLogger('tester')
+        self.logger = logging.getLogger('main.tester')
 
     async def test_single_proxy(self, proxy, timeout=5.0):
         """
@@ -38,12 +38,14 @@ class Tester:
                             self.redis.degrade_proxy(proxy, MAX_SCORE)
                     else:
                         self.redis.degrade_proxy(proxy)
-            except Exception:
+            except Exception as e:
                 self.redis.degrade_proxy(proxy)
+                self.logger.exception(str(e.args))
 
     def run(self, sleep_time=5):
         """
         测试主函数
+
         :param sleep_time: 批测试间隔时间，默认为5秒
         """
         # 检查获取器运行状态，若在运行中，则测试器不运行
@@ -51,7 +53,7 @@ class Tester:
 
         if getter_flag == 'work':
             return
-        self.logger.info('start running')
+        self.logger.info('开始测试代理')
         try:
             count = self.redis.get_proxy_count()
             self.logger.info('当前剩余: %d个代理', count)
@@ -65,4 +67,4 @@ class Tester:
                 loop.run_until_complete(asyncio.wait(tasks))
                 time.sleep(sleep_time)
         except Exception as e:
-            self.logger.error('%s', str(e.args))
+            self.logger.exception(str(e.args))

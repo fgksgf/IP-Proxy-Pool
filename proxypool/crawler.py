@@ -33,7 +33,7 @@ class ProxyMetaclass(type):
 # TODO: Refactor code to reduce duplicated code.
 class Crawler(object, metaclass=ProxyMetaclass):
     def __init__(self):
-        self.logger = logging.getLogger('crawler')
+        self.logger = logging.getLogger('main.crawler')
 
     def get_proxies(self, callback):
         proxies = []

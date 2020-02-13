@@ -14,7 +14,7 @@ class Getter:
     def __init__(self):
         self.redis = RedisClient()
         self.crawler = Crawler()
-        self.logger = logging.getLogger('getter')
+        self.logger = logging.getLogger('main.getter')
 
     def is_over_threshold(self):
         """
@@ -28,7 +28,7 @@ class Getter:
         调用爬虫中的一系列函数，爬取代理，并将代理保存到数据库
         :return: 返回爬取的所有代理数量
         """
-        self.logger.info('start running')
+        self.logger.info('开始爬取代理')
         # 在redis中设置获取器运行状态标志
         self.redis.redis.set('getter:status', 'work')
 
@@ -43,4 +43,4 @@ class Getter:
 
         # 在redis中更改获取器运行状态标志
         self.redis.redis.set('getter:status', 'idle')
-        self.logger.info('运行结束，进入等待状态')
+        self.logger.info('本次爬取完成，进入等待状态')

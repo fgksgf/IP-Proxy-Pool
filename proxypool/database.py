@@ -22,7 +22,7 @@ class RedisClient:
         :param password: Redis密码
         """
         self.redis = redis.StrictRedis(host=host, port=port, password=password, decode_responses=True)
-        self.logger = logging.getLogger('redis')
+        self.logger = logging.getLogger('main.redis')
 
     def add_proxies(self, proxies, score=INITIAL_SCORE, key=REDIS_KEY):
         """
@@ -37,7 +37,7 @@ class RedisClient:
         for proxy in proxies:
             pipe.zadd(key, {proxy: score})
         saved = sum(pipe.execute())
-        self.logger.info('Save %d proxies successfully.', saved)
+        # self.logger.info('Save %d proxies successfully.', saved)
         return saved
 
     def random_get_proxy(self):

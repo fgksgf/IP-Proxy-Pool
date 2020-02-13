@@ -24,6 +24,7 @@ def index():
 def get_single_proxy():
     """
     随机获取一个可用代理
+
     :return: 随机代理
     """
     conn = get_conn()
@@ -34,6 +35,7 @@ def get_single_proxy():
 def get_batch_proxy():
     """
     获取当前所有可用代理
+
     :return: 可用代理列表
     """
     conn = get_conn()
@@ -44,6 +46,7 @@ def get_batch_proxy():
 def get_counts():
     """
     返回当前代理池中代理数量
+
     :return: 代理池总量
     """
     conn = get_conn()
