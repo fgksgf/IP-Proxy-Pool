@@ -48,9 +48,8 @@ class Tester:
                             self.redis.set_max_score(proxy)
                     else:
                         self.redis.degrade_proxy(proxy)
-            except Exception as e:
+            except Exception:
                 self.redis.degrade_proxy(proxy)
-                raise e
 
     def run(self, sleep_time=5):
         """
